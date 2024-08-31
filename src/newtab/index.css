@@ -1,0 +1,53 @@
+@layer tailwind-base, antd;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root,
+#__plasmo {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-zoom: none;
+}
+
+/* 初始隐藏滚动条 */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* 鼠标移入滚动条容器时显示滚动条 */
+* :hover::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* 滚动条轨道 */
+* :hover::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+/* 滚动条滑块 */
+* :hover::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+/* 滚动条滑块移入时的颜色变化 */
+* :hover::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

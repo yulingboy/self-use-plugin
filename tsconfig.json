@@ -1,0 +1,20 @@
+{
+  "extends": "plasmo/templates/tsconfig.base",
+  "jsx": "react",
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "types/*.d.ts",
+    ".plasmo/index.d.ts",
+    "./**/*.ts",
+    "./**/*.tsx"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": [ "./src/*"],
+      "@newtab/*": ["./src/newtab/*"],
+    },
+    "baseUrl": "."
+  }
+}
