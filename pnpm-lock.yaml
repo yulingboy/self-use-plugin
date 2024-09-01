@@ -17,6 +17,9 @@ importers:
       axios:
         specifier: ^1.7.6
         version: 1.7.6
+      chinese-days:
+        specifier: ^1.3.1
+        version: 1.3.1
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -29,6 +32,9 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      tyme4ts:
+        specifier: ^1.1.2
+        version: 1.1.2
     devDependencies:
       '@ianvs/prettier-plugin-sort-imports':
         specifier: 4.1.1
@@ -1779,6 +1785,9 @@ packages:
 
   chardet@0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
+
+  chinese-days@1.3.1:
+    resolution: {integrity: sha512-ImoMcnHKUQQjIF0RMsoANgdvLDNoJYEoFrJ5pxz3XDXbmwV1AKQw/ArYxPuNc6Fv/cCHl97mRg0EAlXw+qEcZQ==}
 
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
@@ -3774,6 +3783,9 @@ packages:
 
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
+
+  tyme4ts@1.1.2:
+    resolution: {integrity: sha512-MI6TKVfErtI8clI0vej+ddXE6az3CvEuefRjyOUn2kiMrcbsVZKmPCXiZ1FkP8l5dclWbS8K7XRjmhLWF2bQsg==}
 
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
@@ -6040,6 +6052,8 @@ snapshots:
 
   chardet@0.7.0: {}
 
+  chinese-days@1.3.1: {}
+
   chokidar@3.6.0:
     dependencies:
       anymatch: 3.1.3
@@ -8138,6 +8152,8 @@ snapshots:
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
+
+  tyme4ts@1.1.2: {}
 
   type-check@0.4.0:
     dependencies:
