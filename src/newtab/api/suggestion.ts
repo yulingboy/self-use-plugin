@@ -5,7 +5,6 @@ async function handleRequest(callback: () => Promise<string[]>): Promise<string[
   try {
     return await callback()
   } catch (error) {
-    console.error("Error fetching suggestions:", error)
     return []
   }
 }

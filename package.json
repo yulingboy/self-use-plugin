@@ -43,6 +43,6 @@
     "host_permissions": [
       "https://*/*"
     ],
-    "permissions": []
+    "permissions": ["topSites"]
   }
 }

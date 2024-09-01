@@ -38,7 +38,6 @@ const DailyBingWallpaper: React.FC = () => {
           }
         }
       } catch (error) {
-        console.error("Error fetching Bing wallpaper:", error)
         setBackgroundUrl(DEFAULT_WALLPAPER_URL) // 设置为默认壁纸
       } finally {
         setIsLoading(false)

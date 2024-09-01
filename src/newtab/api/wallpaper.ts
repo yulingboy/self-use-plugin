@@ -40,7 +40,6 @@ export async function fetchDailyBingWallpaper(imageCount: number = 1): Promise<s
         mkt: "zh-CN" // 市场区域为中国
       }
     })
-    console.log("data", data)
 
     // 解构提取图像数据中的第一张图片
     const [firstImage] = data.images || []
@@ -48,8 +47,6 @@ export async function fetchDailyBingWallpaper(imageCount: number = 1): Promise<s
     // 检查图像数据是否存在，存在则返回完整的图片URL
     return !isEmpty(firstImage) ? BING_BASE_URL + firstImage.url : null
   } catch (error) {
-    // 如果请求出错，打印错误并返回null
-    console.error("Error fetching daily Bing wallpaper:", error)
     return null
   }
 }
