@@ -44,7 +44,7 @@ export function equalsIgnoreCase(source?: string, target?: string) {
  * @returns
  */
 export function containsAny(source: string, ...tragets: string[]) {
-  return tragets.some(item => source.includes(item))
+  return tragets.some((item) => source.includes(item))
 }
 
 /**
@@ -54,7 +54,7 @@ export function containsAny(source: string, ...tragets: string[]) {
  * @returns
  */
 export function containsAll(source: string, ...tragets: string[]) {
-  return tragets.every(item => source.includes(item))
+  return tragets.every((item) => source.includes(item))
 }
 
 /**
@@ -81,13 +81,7 @@ export function deepClone<E extends object>(obj: E, ...ignoreKeys: string[]): E 
  * @param target 目标
  * @param deep 深度
  */
-export function copy(
-  source: object,
-  target: object,
-  onlyExist: boolean = false,
-  skipEmpty: boolean = true,
-  deep: number = 0
-) {
+export function copy(source: object, target: object, onlyExist: boolean = false, skipEmpty: boolean = true, deep: number = 0) {
   const keys = Object.keys(source)
   for (const key of keys) {
     const temp = source[key]
@@ -112,7 +106,7 @@ export function copy(
  * @returns 除keys参数外的key
  */
 export function otherKeys<T extends object, K extends keyof T>(source: T, ...keys: K[]): Array<K> {
-  return Object.keys(source).filter(key => !keys.includes(key as K)) as Array<K>
+  return Object.keys(source).filter((key) => !keys.includes(key as K)) as Array<K>
 }
 
 /**
@@ -132,4 +126,14 @@ export function uuid() {
   temp[19] = hexDigits.substr((temp[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
   temp[8] = temp[13] = temp[18] = temp[23] = "-"
   return temp.join("")
+}
+
+/**
+ * 判断是否是域名
+ * @param value 传入的地址
+ * @returns
+ */
+export function isDomain(value: string): boolean {
+  const domainRegex = /^(((https?|ftp):\/\/)?([a-zA-Z0-9_-]+\.)*[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.[a-zA-Z]{2,})(\/[^\s]*)?$/
+  return domainRegex.test(value)
 }

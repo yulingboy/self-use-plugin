@@ -38,9 +38,14 @@ export function base64ToBlob(base64: string) {
   return new Blob([u8arr], { type: mime })
 }
 
+/**
+ * 获取文件名称
+ * @param path 文件地址
+ * @returns 文件名称
+ */
 export function getFilename(path: string) {
-  const start = path.lastIndexOf("/") + 1,
-    end = path.lastIndexOf(".")
+  const start = path.lastIndexOf("/") + 1
+  const end = path.lastIndexOf(".")
 
   return path.substring(start, end)
 }

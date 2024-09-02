@@ -1,66 +1,77 @@
-import { fetchFaviconUrl } from "@newtab/utils/img"
-import { message } from "antd"
+import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons"
+import { uuid } from "@newtab/utils/common"
+import { convertImageToBase64 } from "@newtab/utils/img"
+import { fetchWebsiteInfo } from "@newtab/utils/website"
+import { Dropdown, message, Modal } from "antd"
 import React, { useEffect, useState } from "react"
 
-// 站点信息类型定义
-type SiteInfo = {
+import SiteModal from "./SiteModal"
+
+interface SiteInfo {
+  id: string
   url: string
   title: string
   iconBase64: string
 }
-
+interface Values {
+  id: string
+  url: string
+  favicon: string
+  description: string
+  title: string
+  autoGetIcon: boolean
+}
 const NavList: React.FC = () => {
-  const [siteList, setSiteList] = useState<SiteInfo[]>([]) // 站点列表状态
-  const [messageApi, contextHolder] = message.useMessage() // 消息提示 API
+  const [siteList, setSiteList] = useState<SiteInfo[]>([])
+  const [messageApi, contextHolder] = message.useMessage()
+  const [editingSite, setEditingSite] = useState<SiteInfo | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFormLoading, setIsFormLoading] = useState(false)
 
   useEffect(() => {
-    initializeSites() // 初始化站点数据
+    initializeSites()
   }, [])
 
   // 初始化站点数据
   const initializeSites = async () => {
-    const cachedSites = getCachedSites() // 获取缓存的站点
+    const cachedSites = getCachedSites()
     if (cachedSites) {
-      setSiteList(cachedSites) // 如果有缓存，则直接设置站点列表
+      setSiteList(cachedSites)
     } else {
-      await loadTopSites() // 否则从 Chrome API 加载站点
+      await loadTopSites()
     }
   }
 
-  // 获取缓存站点数据
   const getCachedSites = (): SiteInfo[] | null => {
     const cachedData = localStorage.getItem("siteList")
     return cachedData ? JSON.parse(cachedData) : null
   }
 
-  // 缓存站点数据
   const cacheSites = (sites: SiteInfo[]) => {
     localStorage.setItem("siteList", JSON.stringify(sites))
   }
 
-  // 从 Chrome API 加载站点
   const loadTopSites = async () => {
     if (!chrome?.topSites?.get) return messageApi.warning("chrome.topSites API 不可用")
 
-    messageApi.info("正在加载站点数据，请稍候...")
-
+    messageApi.loading("正在加载站点数据，请稍候...")
     try {
-      const topSites = await chrome.topSites.get() // 获取 topSites 数据
-      const sitesWithIcons = await fetchSitesWithIcons(topSites) // 获取站点图标并转换为 Base64
-      setSiteList(sitesWithIcons) // 设置站点列表
-      cacheSites(sitesWithIcons) // 缓存站点数据
+      const topSites = await chrome.topSites.get()
+      const sitesWithIcons = await enrichSitesWithIcons(topSites)
+      setSiteList(sitesWithIcons)
+      cacheSites(sitesWithIcons)
     } catch (error) {
       messageApi.error("获取站点数据失败，请稍后再试。")
     }
   }
 
-  // 处理站点图标并转换为 Base64 格式
-  const fetchSitesWithIcons = async (topSites: chrome.topSites.MostVisitedURL[]) => {
+  const enrichSitesWithIcons = async (topSites: chrome.topSites.MostVisitedURL[]) => {
     return Promise.all(
       topSites.map(async (site) => {
-        const iconUrl = await fetchFaviconUrl(site.url) // 获取站点的图标 URL
-        const iconBase64 = iconUrl ? await convertImageToBase64(iconUrl) : "" // 将图标转换为 Base64
+        const { favicon } = await fetchWebsiteInfo(site.url)
+        const iconBase64 = favicon ? await convertImageToBase64(favicon) : ""
         return {
+          id: uuid(),
           url: site.url,
           title: site.title,
           iconBase64
@@ -69,45 +80,87 @@ const NavList: React.FC = () => {
     )
   }
 
-  // 将图片 URL 转换为 Base64
-  const convertImageToBase64 = (imageUrl: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image()
-      img.crossOrigin = "Anonymous"
-      img.src = imageUrl
-
-      img.onload = () => {
-        const canvas = document.createElement("canvas")
-        canvas.width = img.width
-        canvas.height = img.height
-
-        const ctx = canvas.getContext("2d")
-        ctx?.drawImage(img, 0, 0)
-
-        resolve(canvas.toDataURL("image/png")) // 返回 Base64 字符串
-      }
-
-      img.onerror = reject // 处理加载错误
-    })
-  }
-
-  // 处理点击事件，打开站点
   const handleNavigateToSite = (site: SiteInfo) => {
     window.open(site.url)
   }
 
-  // 渲染站点组件
+  const handleAddSite = () => {
+    setEditingSite(null)
+    setIsModalOpen(true)
+  }
+
+  const handleEditSite = (site: SiteInfo) => {
+    setEditingSite(site)
+    setIsModalOpen(true)
+  }
+
+  const handleDeleteSite = (site: SiteInfo) => {
+    Modal.confirm({
+      title: "提示",
+      icon: <ExclamationCircleFilled />,
+      content: "是否确认删除该链接，一旦删除，不可恢复",
+      okText: "确认",
+      cancelText: "取消",
+      onOk() {
+        const updatedSiteList = siteList.filter((s) => s.id !== site.id)
+        setSiteList(updatedSiteList)
+        cacheSites(updatedSiteList)
+        messageApi.success("站点已删除")
+      }
+    })
+  }
+
+  const handleFormSubmit = async (values: Values) => {
+    setIsFormLoading(true)
+    try {
+      let updatedSiteList: SiteInfo[]
+
+      if (editingSite) {
+        updatedSiteList = siteList.map((site) => (site.url === editingSite.url ? { ...site, ...values, iconBase64: site.iconBase64 } : site))
+        messageApi.success("站点编辑成功")
+      } else {
+        const iconBase64 = values.autoGetIcon && values.favicon ? await convertImageToBase64(values.favicon) : ""
+        updatedSiteList = [...siteList, { ...values, iconBase64, id: uuid() }]
+        messageApi.success("站点添加成功")
+      }
+
+      setSiteList(updatedSiteList)
+      cacheSites(updatedSiteList)
+      setIsModalOpen(false)
+    } catch (error) {
+      messageApi.error("操作失败，请稍后再试。")
+    } finally {
+      setIsFormLoading(false)
+    }
+  }
+
   return (
     <div className="grid auto-rows-auto grid-cols-8 gap-8">
       {contextHolder}
       {siteList.map((site) => (
-        <div key={site.url} className="relative size-16 cursor-pointer" onClick={() => handleNavigateToSite(site)}>
-          <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-white">
-            {site.iconBase64 ? <img src={site.iconBase64} alt={site.title} className="max-h-16 max-w-16" /> : <div>图标</div>}
+        <Dropdown
+          key={site.id}
+          menu={{
+            items: [
+              { label: "编辑", icon: <EditOutlined />, key: "edit", onClick: () => handleEditSite(site) },
+              { label: "删除", icon: <DeleteOutlined />, key: "delete", onClick: () => handleDeleteSite(site) }
+            ]
+          }}
+          trigger={["contextMenu"]}>
+          <div className="relative size-16 cursor-pointer" onClick={() => handleNavigateToSite(site)}>
+            <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-white">
+              {site.iconBase64 ? <img src={site.iconBase64} alt={site.title} className="max-h-16 max-w-16" /> : <div>图标</div>}
+            </div>
+            <div className="absolute -bottom-6 left-1/2 w-full -translate-x-1/2 truncate text-center text-white">{site.title}</div>
           </div>
-          <div className="absolute -bottom-6 left-1/2 w-full -translate-x-1/2 truncate text-center text-white">{site.title}</div>
-        </div>
+        </Dropdown>
       ))}
+      <div className="relative size-16 cursor-pointer" onClick={handleAddSite}>
+        <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-white">
+          <PlusOutlined className="text-xl" />
+        </div>
+      </div>
+      <SiteModal visible={isModalOpen} site={editingSite} onClose={() => setIsModalOpen(false)} onSubmit={handleFormSubmit} loading={isFormLoading} />
     </div>
   )
 }
