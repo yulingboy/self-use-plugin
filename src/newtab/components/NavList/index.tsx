@@ -1,6 +1,6 @@
 import { DeleteOutlined, EditOutlined, ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons"
 import { uuid } from "@newtab/utils/common"
-import { convertImageToBase64 } from "@newtab/utils/img"
+import { convertToBase64 } from "@newtab/utils/img"
 import { fetchWebsiteInfo } from "@newtab/utils/website"
 import { Dropdown, message, Modal } from "antd"
 import React, { useEffect, useState } from "react"
@@ -11,7 +11,8 @@ interface SiteInfo {
   id: string
   url: string
   title: string
-  iconBase64: string
+  favicon: string
+  backgroundColor: string
 }
 interface Values {
   id: string
@@ -19,7 +20,7 @@ interface Values {
   favicon: string
   description: string
   title: string
-  autoGetIcon: boolean
+  backgroundColor: string
 }
 const NavList: React.FC = () => {
   const [siteList, setSiteList] = useState<SiteInfo[]>([])
@@ -69,12 +70,13 @@ const NavList: React.FC = () => {
     return Promise.all(
       topSites.map(async (site) => {
         const { favicon } = await fetchWebsiteInfo(site.url)
-        const iconBase64 = favicon ? await convertImageToBase64(favicon) : ""
+        const iconBase64 = favicon ? await convertToBase64(favicon) : ""
         return {
           id: uuid(),
           url: site.url,
           title: site.title,
-          iconBase64
+          favicon: iconBase64,
+          backgroundColor: "#ffffff"
         }
       })
     )
@@ -116,11 +118,11 @@ const NavList: React.FC = () => {
       let updatedSiteList: SiteInfo[]
 
       if (editingSite) {
-        updatedSiteList = siteList.map((site) => (site.url === editingSite.url ? { ...site, ...values, iconBase64: site.iconBase64 } : site))
+        updatedSiteList = siteList.map((site) => (site.url === editingSite.url ? { ...site, ...values, favicon: site.favicon } : site))
         messageApi.success("站点编辑成功")
       } else {
-        const iconBase64 = values.autoGetIcon && values.favicon ? await convertImageToBase64(values.favicon) : ""
-        updatedSiteList = [...siteList, { ...values, iconBase64, id: uuid() }]
+        const favicon = !values.favicon ? "" :  values.favicon.startsWith('base64') ? values.favicon :  await convertToBase64(values.favicon)
+        updatedSiteList = [...siteList, { ...values, favicon, id: uuid() }]
         messageApi.success("站点添加成功")
       }
 
@@ -148,8 +150,8 @@ const NavList: React.FC = () => {
           }}
           trigger={["contextMenu"]}>
           <div className="relative size-16 cursor-pointer" onClick={() => handleNavigateToSite(site)}>
-            <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-white">
-              {site.iconBase64 ? <img src={site.iconBase64} alt={site.title} className="max-h-16 max-w-16" /> : <div>图标</div>}
+            <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl" style={{backgroundColor: site.backgroundColor}}>
+              {site.favicon ? <img src={site.favicon} alt={site.title} className="max-h-16 max-w-16" /> : <div>图标</div>}
             </div>
             <div className="absolute -bottom-6 left-1/2 w-full -translate-x-1/2 truncate text-center text-white">{site.title}</div>
           </div>

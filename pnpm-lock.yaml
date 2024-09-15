@@ -23,6 +23,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      k-colors:
+        specifier: ^0.0.4
+        version: 0.0.4
       plasmo:
         specifier: 0.89.1
         version: 0.89.1(@swc/core@1.7.22(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)(lodash@4.17.21)(postcss@8.4.41)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -2556,6 +2559,12 @@ packages:
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
+
+  k-colors@0.0.4:
+    resolution: {integrity: sha512-HiA6FNAOT4NpVp1ZlIVWEDZZZynlBv8rqx/y5LU9qGtR1s3WltIPwcIuKM7oZkpxgagBTAjX69I9r74LMRIeuw==}
+
+  k-means-pp@2.2.1:
+    resolution: {integrity: sha512-mOx2i+dw0+mRMlFm3OOhzDtlGx7HzAtEsol8oM98lWYatqocFLH9zx0f+QdzvmJNsUpoFvjJHTeDoxhc9WBdrg==}
 
   keyv@4.5.4:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
@@ -6813,6 +6822,12 @@ snapshots:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
+
+  k-colors@0.0.4:
+    dependencies:
+      k-means-pp: 2.2.1
+
+  k-means-pp@2.2.1: {}
 
   keyv@4.5.4:
     dependencies:

@@ -1,0 +1,20 @@
+[
+    {
+        "id": "baidu",
+        "name": "百度",
+        "description": "百度是中国使用群体最多的一款搜索引擎",
+        "url": "https://www.baidu.com/s?ie=utf-8&wd={searchText}"
+    },
+    {
+        "id": "google",
+        "name": "Google",
+        "description": "Google搜索是全球公认为全球最大的搜索引擎",
+        "url": "https://www.google.com/search?q={searchText}&ie=utf-8"
+    },
+    {
+        "id": "bing",
+        "name": "Bing",
+        "description": "必应是一款由微软公司推出的网络搜索引擎",
+        "url": "https://cn.bing.com/search?q={searchText}"
+    }
+]
