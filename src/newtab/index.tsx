@@ -7,6 +7,7 @@ import NavList from "@newtab/components/NavList"
 import SearchInput from "@newtab/components/SearchInput"
 import TimeCalendar from "@newtab/components/TimeCalendar"
 import Wallpaper from "@newtab/components/Wallpaper"
+import Dock from "@newtab/components/Dock"
 
 const isShowNavList: boolean = true
 
@@ -38,6 +39,7 @@ const IndexPage: React.FC = () => {
           <NavList></NavList>
         </div>
       </div>
+      <Dock></Dock>
     </div>
   )
 }
