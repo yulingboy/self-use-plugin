@@ -14,6 +14,7 @@
     "paths": {
       "@/*": [ "./src/*"],
       "@newtab/*": ["./src/newtab/*"],
+      "@utils/*": ["./src/utils/*"],
     },
     "baseUrl": "."
   }
