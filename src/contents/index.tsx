@@ -22,8 +22,8 @@ let copyToClipboard = (text: string) => {
 export const config: PlasmoCSConfig = {}
 
 // 获取根容器，当 DOM 加载完成后，创建并插入根容器
-export const getRootContainer = () =>
-  new Promise((resolve) => {
+export const getRootContainer = () => {
+  return new Promise((resolve) => {
     const checkInterval = setInterval(() => {
       // 查找 body 标签，确保页面已加载完成
       const rootContainerParent = document.querySelector("body")
@@ -36,6 +36,7 @@ export const getRootContainer = () =>
       }
     }, 137)
   })
+}
 
 const PlasmoOverlay: FC<PlasmoCSUIProps> = () => {
   const [messageApi, contextHolder] = message.useMessage()

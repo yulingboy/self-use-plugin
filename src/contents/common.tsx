@@ -1,62 +1,73 @@
 import type { PlasmoCSConfig } from "plasmo"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 
 export const config: PlasmoCSConfig = {}
 
-const CsdnExtension = () => {
+/**
+ * 从 URL 中提取目标地址
+ * @param url 原始 URL
+ * @returns 目标地址
+ */
+const getTargetUrl = (url: string): string | null => {
+  const queryParams = new URLSearchParams(url.split("?")[1] || "")
+  return queryParams.get("target") || queryParams.get("url")
+}
+
+/**
+ * 判断是否是http地址
+ * @param url url地址
+ * @returns 是否为http链接
+ */
+const isHttpLink = (url: string) => {
+  return url && url.startsWith("http")
+}
+
+const CommonExtension = () => {
+  const clickListenerRef = useRef<null | ((e: Event) => void)>(null)
+
   useEffect(() => {
-    redirectToTargetUrl()
+    autoRedirect()
+
+    clickListenerRef.current = interceptLinkClick
+    document.body.addEventListener("click", clickListenerRef.current)
+
+    return () => {
+      if (clickListenerRef.current) {
+        document.body.removeEventListener("click", clickListenerRef.current)
+      }
+    }
   }, [])
 
   /**
-   * 功能一： 自动跳过安全提示页面
-   * @returns
+   * 功能一：自动跳过安全提示页面并跳转到目标地址
    */
-  function redirectToTargetUrl() {
-    const href = window.location.href
-    const target = extractTargetUrl(href)
-    if (!target || !target.startsWith("http")) return
-
-    // 显示加载中提示
-    showLoading()
-
-    // 跳转到目标 URL
-    window.location.replace(target)
+  const autoRedirect = () => {
+    const currentUrl = window.location.href
+    const targetUrl = getTargetUrl(currentUrl)
+    isHttpLink(targetUrl) && window.location.replace(targetUrl)
   }
 
   /**
-   * 辅助函数 从 URL 中提取目标地址参数
-   * @param url 原始url
-   * @returns 目标url
+   * 功能二：拦截 <a> 标签点击事件，并根据目标 URL 进行跳转
+   * @param event 事件对象
    */
-  function extractTargetUrl(url: string): string | null {
-    if (!url.includes("target") && !url.includes("url")) return null
-    const queryParams = new URLSearchParams(url.split("?")[1] || "")
-    return queryParams.get("target") || queryParams.get("url")
-  }
+  const interceptLinkClick = (event: Event) => {
+    const clickedElement = event.target as HTMLElement
+    if (clickedElement.nodeName.toLowerCase() !== "a") return
 
-  /**
-   * 显示加载中提示
-   */
-  function showLoading() {
-    document.body.innerHTML = `
-      <div style="
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 20px 40px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        z-index: 9999;
-      ">
-        <p>正在跳转中， 请稍后...</p>
-      </div>
-    `
+    const link = clickedElement as HTMLAnchorElement
+    let url = link.getAttribute("href")
+    if (url) {
+      event.preventDefault()
+      const targetUrl = getTargetUrl(url)
+      isHttpLink(targetUrl) && (url = targetUrl)
+
+      const shouldOpenInNewTab = link.getAttribute("target") === "_blank"
+      shouldOpenInNewTab ? window.open(url) : (window.location.href = url)
+    }
   }
 
   return <div style={{ display: "none" }}></div>
 }
 
-export default CsdnExtension
+export default CommonExtension
