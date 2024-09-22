@@ -54,7 +54,8 @@
     "permissions": [
       "topSites",
       "contextMenus",
-      "tabs"
+      "tabs",
+      "storage"
     ]
   }
 }

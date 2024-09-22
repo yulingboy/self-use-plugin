@@ -1,61 +1,54 @@
-import React from "react";
-import type { FormProps } from "antd";
-import { Form, Select, Switch } from "antd";
+import { updateSettingItem } from "@newtab/store/modules/setting"
+import { useAppDispatch, useAppSelector } from "@newtab/store"
+import { Form, Select, Switch } from "antd"
+import React from "react"
 
-type FieldType = {
-  username?: string;
-  password?: string;
-  remember?: string;
-};
+const LayoutSetting: React.FC = () => {
+  const dispatch = useAppDispatch()
+  const { timeCalendar, search, navList, dock } = useAppSelector((state) => state.setting)
 
-const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-  console.log("Success:", values);
-};
+  // 处理开关更新
+  const handleSwitchChange = (part, key, value: boolean) => {
+    dispatch(updateSettingItem({ part, key, value }))
+  }
 
-const LayoutSetting: React.FC = () => (
-  <div className="size-full box-border p-4 bg-white shadow">
-    <Form onFinish={onFinish} autoComplete="off">
-      <Form.Item<FieldType>>
-        <div className="flex justify-between">
-          <span>布局类型</span>
-          <Select
-            defaultValue="jack"
-            style={{ width: 120 }}
-            options={[
-              { value: "jack", label: "千山" },
-              { value: "lucy", label: "万水" },
-              { value: "Yiminghe", label: "火山" },
-              { value: "disabled", label: "有道", disabled: true },
-            ]}
-          />
-        </div>
-      </Form.Item>
-      <Form.Item<FieldType>>
-        <div className="flex justify-between">
-          <span>显示时间</span>
-          <Switch defaultChecked />
-        </div>
-      </Form.Item>
-      <Form.Item<FieldType>>
-        <div className="flex justify-between">
-          <span>显示搜索框</span>
-          <Switch defaultChecked />
-        </div>
-      </Form.Item>
-      <Form.Item<FieldType>>
-        <div className="flex justify-between">
-          <span>显示导航</span>
-          <Switch defaultChecked />
-        </div>
-      </Form.Item>
-      <Form.Item<FieldType>>
-        <div className="flex justify-between">
-          <span>显示dock</span>
-          <Switch defaultChecked />
-        </div>
-      </Form.Item>
-    </Form>
-  </div>
-);
+  return (
+    <div className="box-border size-full bg-white p-4 shadow">
+      <Form autoComplete="off">
+        {/* 布局类型选择 */}
+        <Form.Item>
+          <div className="flex justify-between">
+            <span>布局类型</span>
+            <Select
+              defaultValue="jack"
+              style={{ width: 120 }}
+              options={[
+                { value: "jack", label: "千山" },
+                { value: "lucy", label: "万水" },
+                { value: "Yiminghe", label: "火山" },
+                { value: "disabled", label: "有道", disabled: true }
+              ]}
+            />
+          </div>
+        </Form.Item>
 
-export default LayoutSetting;
+        {/* 动态生成的开关 */}
+        {[
+          { label: "显示时间", value: timeCalendar.show, part: "timeCalendar" },
+          { label: "显示搜索框", value: search.show, part: "search" },
+          { label: "显示导航", value: navList.show, part: "navList" },
+          { label: "显示Dock", value: dock.show, part: "dock" }
+        ].map(({ label, value, part }) => (
+          <Form.Item key={part}>
+            <div className="flex justify-between">
+              <span>{label}</span>
+              <Switch checked={value} onChange={(checked) => handleSwitchChange(part, "show", checked)} />
+            </div>
+          </Form.Item>
+        ))}
+      </Form>
+    </div>
+  )
+}
+
+export default LayoutSetting

@@ -5,16 +5,19 @@
     "node_modules"
   ],
   "include": [
+    "**/types/*.ts",
+    "**/types/*.d.ts",   // 包含所有子目录下的 types 目录
     "types/*.d.ts",
     ".plasmo/index.d.ts",
     "./**/*.ts",
-    "./**/*.tsx"
+    "./**/*.tsx",
+    "src/newtab/types/*.d.ts"  // 新增对 newtab/types 下 .d.ts 文件的包含
   ],
   "compilerOptions": {
     "paths": {
       "@/*": [ "./src/*"],
       "@newtab/*": ["./src/newtab/*"],
-      "@utils/*": ["./src/utils/*"],
+      "@utils/*": ["./src/utils/*"]
     },
     "baseUrl": "."
   }
